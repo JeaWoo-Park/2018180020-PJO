@@ -23,14 +23,22 @@ def handle_events():
             p1 = char_point
             move_character(p1, p2)
 
+
 frame = 0
 char_state = 3  # 0 왼쪽 달림 1 오른쪽 달림 2 왼쪽 멈춤 3 오른쪽 멈춤
 
 
 def move_character(p1, p2):
     global frame
-    for i in range(0, 100 + 1, 5):
+    global char_state
+    if p1[0] > p2[0]:
+        char_state = 0
+    elif p1[0] < p2[0]:
+        char_state = 1
+    for i in range(0, 100 + 1, 2):
         clear_canvas()
+        kpu_ground.draw(KPU_W // 2, KPU_H // 2)
+        mouse.draw(x + 20, y - 22)
         t = i / 100
         x1 = (1 - t) * p1[0] + t * p2[0]
         y1 = (1 - t) * p1[1] + t * p2[1]
@@ -39,6 +47,8 @@ def move_character(p1, p2):
         character.clip_draw(frame * 100, 100 * char_state, 100, 100, char_point[0], char_point[1])
         frame = (frame + 1) % 8
         update_canvas()
+        delay(0.01)
+    char_state += 2
 
 
 open_canvas(KPU_W, KPU_H)
