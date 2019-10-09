@@ -24,12 +24,12 @@ kpu_ground = load_image('KPU_GROUND.png')
 mouse = load_image('hand_arrow.png')
 character = load_image('animation_sheet.png')
 frame = 0
-hide_cursor()
+#hide_cursor()
 
 while running:
     clear_canvas()
     kpu_ground.draw(KPU_W // 2, KPU_H // 2)
-    mouse.draw(x, y)
+    mouse.draw(x + 20, y - 22)
     update_canvas()
     frame = (frame + 1) % 8
 
