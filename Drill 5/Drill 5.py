@@ -29,7 +29,7 @@ hide_cursor()
 while running:
     clear_canvas()
     kpu_ground.draw(KPU_W // 2, KPU_H // 2)
-
+    mouse.draw(x, y)
     update_canvas()
     frame = (frame + 1) % 8
 
