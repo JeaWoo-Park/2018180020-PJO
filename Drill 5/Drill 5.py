@@ -35,11 +35,11 @@ def move_character(p1, p2):
         char_state = 0
     elif p1[0] < p2[0]:
         char_state = 1
-    for i in range(0, 100 + 1, 2):
+    for i in range(0, 50 + 1, 2):
         clear_canvas()
         kpu_ground.draw(KPU_W // 2, KPU_H // 2)
         mouse.draw(x + 20, y - 22)
-        t = i / 100
+        t = i / 50
         x1 = (1 - t) * p1[0] + t * p2[0]
         y1 = (1 - t) * p1[1] + t * p2[1]
         char_point[0] = x1
