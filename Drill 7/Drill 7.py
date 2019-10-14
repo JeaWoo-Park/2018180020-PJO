@@ -5,7 +5,7 @@ import random
 class Ball:
     def __init__(self):
         self.x, self.y = random.randint(0, 800), 599
-        self.speed = random.randint(2, 6)
+        self.speed = random.randint(3, 8)
         self.type = random.randint(0, 1)
         if self.type == 1:
             self.image = load_image('ball21x21.png')
@@ -13,7 +13,12 @@ class Ball:
             self.image = load_image('ball41x41.png')
 
     def update(self):
-        self.y -= self.speed
+        if self.type == 0:
+            if self.y > 70:
+                self.y -= self.speed
+        elif self.type == 1:
+            if self.y > 60:
+                self.y -= self.speed
 
     def draw(self):
         self.image.draw(self.x, self.y)
@@ -32,12 +37,14 @@ class Boy:
     def draw(self):
         self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)
 
+
 class Grass:
     def __init__(self):
         self.image = load_image('grass.png')
 
     def draw(self):
         self.image.draw(400, 30)
+
 
 def handle_events():
     global running
