@@ -50,3 +50,7 @@ def handle_events():
 
 
 open_canvas()
+grass = Grass()
+team = [Boy() for i in range(11)]
+balls = [Ball() for i in range(20)]
+running = True
