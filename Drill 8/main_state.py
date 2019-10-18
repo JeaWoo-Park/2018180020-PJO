@@ -76,7 +76,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_P:
-            game_framework.change_state(puase_state)
+            game_framework.push_state(puase_state)
     pass
 
 
