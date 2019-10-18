@@ -7,15 +7,11 @@ from pico2d import *
 import puase_state
 import game_framework
 
-
-
-
 name = "MainState"
 
 boy = None
 grass = None
 font = None
-
 
 
 class Grass:
@@ -24,7 +20,6 @@ class Grass:
 
     def draw(self):
         self.image.draw(400, 30)
-
 
 
 class Boy:
@@ -91,8 +86,3 @@ def draw():
     boy.draw()
     update_canvas()
     pass
-
-
-
-
-

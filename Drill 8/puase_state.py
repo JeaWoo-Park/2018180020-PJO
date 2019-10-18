@@ -3,6 +3,7 @@ import main_state
 import game_framework
 
 
+
 class puase:
     def __init__(self):
         self.image = load_image('pause.png')
@@ -33,11 +34,14 @@ def enter():
 
 
 def update():
+    
     pass
 
 
 def draw():
     clear_canvas()
+
+    game_framework.stack[-2].draw()
     image.draw()
     update_canvas()
     pass
