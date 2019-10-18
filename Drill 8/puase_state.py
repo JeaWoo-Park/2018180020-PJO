@@ -2,14 +2,16 @@ from pico2d import *
 import main_state
 import game_framework
 
+time = 0.0
 
 
 class puase:
     def __init__(self):
         self.image = load_image('pause.png')
-
+        self.timer = True
     def draw(self):
-        self.image.draw(400, 300, 200, 200)
+        if self.timer == True:
+            self.image.draw(400, 300, 200, 200)
 
 
 def exit():
@@ -34,13 +36,20 @@ def enter():
 
 
 def update():
-    
+    global time
+    if time > 0.5:
+        time = 0
+        if image.timer == False:
+            image.timer = True
+        elif image.timer == True:
+            image.timer = False
+    delay(0.01)
+    time += 0.01
     pass
 
 
 def draw():
     clear_canvas()
-
     game_framework.stack[-2].draw()
     image.draw()
     update_canvas()
