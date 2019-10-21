@@ -1,7 +1,9 @@
 from pico2d import *
 
+
 # Boy Event
-RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP = range(4)
+RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, L_DASH_ON, R_DASH_ON, L_DASH_OFF, R_DASH_OFF, DASH_TIMER = range(9)
+
 
 # fill here
 
@@ -9,8 +11,12 @@ RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP = range(4)
 key_event_table = {
     (SDL_KEYDOWN, SDLK_RIGHT): RIGHT_DOWN,
     (SDL_KEYDOWN, SDLK_LEFT): LEFT_DOWN,
+    (SDL_KEYDOWN, SDLK_LSHIFT): L_DASH_ON,
+    (SDL_KEYDOWN, SDLK_RSHIFT): R_DASH_ON,
     (SDL_KEYUP, SDLK_RIGHT): RIGHT_UP,
-    (SDL_KEYUP, SDLK_LEFT): LEFT_UP
+    (SDL_KEYUP, SDLK_LEFT): LEFT_UP,
+    (SDL_KEYUP, SDLK_LSHIFT): L_DASH_OFF,
+    (SDL_KEYUP, SDLK_RSHIFT): R_DASH_OFF,
 }
 
 
@@ -35,7 +41,6 @@ class IdleState:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
-        boy.timer -= 1
 
     @staticmethod
     def draw(boy):
@@ -43,6 +48,37 @@ class IdleState:
             boy.image.clip_draw(boy.frame * 100, 300, 100, 100, boy.x, boy.y)
         else:
             boy.image.clip_draw(boy.frame * 100, 200, 100, 100, boy.x, boy.y)
+
+class DashState:
+    @staticmethod
+    def enter(boy,event):
+        if event == R_DASH_ON:
+            boy.velocity += 2
+        elif event == L_DASH_ON:
+            boy.velocity -= 2
+        elif event == R_DASH_OFF:
+            boy.velocity -= 2
+        elif event == L_DASH_OFF:
+            boy.velocity += 2
+        boy.dir = boy.velocity
+
+    @staticmethod
+    def exit(boy, event):
+        pass
+
+    @staticmethod
+    def do(boy):
+        boy.frame = (boy.frame + 1) % 8
+        boy.timer -= 1
+        boy.x += boy.velocity
+        boy.x = clamp(25, boy.x, 800 - 25)
+
+    @staticmethod
+    def draw(boy):
+        if boy.velocity == 1:
+            boy.image.clip_draw(boy.frame * 100, 100, 100, 100, boy.x, boy.y)
+        else:
+            boy.image.clip_draw(boy.frame * 100, 0, 100, 100, boy.x, boy.y)
 
 
 class RunState:
@@ -57,6 +93,8 @@ class RunState:
             boy.velocity -= 1
         elif event == LEFT_UP:
             boy.velocity += 1
+        if event == R_DASH_OFF or event == L_DASH_OFF:
+            boy.timer = 1000
         boy.dir = boy.velocity
 
     @staticmethod
