@@ -1,9 +1,7 @@
 from pico2d import *
 
-
 # Boy Event
 RIGHT_DOWN, LEFT_DOWN, RIGHT_UP, LEFT_UP, L_DASH_ON, R_DASH_ON, L_DASH_OFF, R_DASH_OFF, DASH_TIMER = range(9)
-
 
 # fill here
 
@@ -32,7 +30,6 @@ class IdleState:
             boy.velocity -= 1
         elif event == LEFT_UP:
             boy.velocity += 1
-        boy.timer = 1000
 
     @staticmethod
     def exit(boy, event):
@@ -49,18 +46,11 @@ class IdleState:
         else:
             boy.image.clip_draw(boy.frame * 100, 200, 100, 100, boy.x, boy.y)
 
+
 class DashState:
     @staticmethod
-    def enter(boy,event):
-        if event == R_DASH_ON:
-            boy.velocity += 2
-        elif event == L_DASH_ON:
-            boy.velocity -= 2
-        elif event == R_DASH_OFF:
-            boy.velocity -= 2
-        elif event == L_DASH_OFF:
-            boy.velocity += 2
-        boy.dir = boy.velocity
+    def enter(boy, event):
+        boy.timer = 100
 
     @staticmethod
     def exit(boy, event):
@@ -70,12 +60,14 @@ class DashState:
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
         boy.timer -= 1
-        boy.x += boy.velocity
+        boy.x += boy.velocity * 2
         boy.x = clamp(25, boy.x, 800 - 25)
+        if boy.timer == 0:
+            boy.add_event(DASH_TIMER)
 
     @staticmethod
     def draw(boy):
-        if boy.velocity == 1:
+        if boy.velocity == 3:
             boy.image.clip_draw(boy.frame * 100, 100, 100, 100, boy.x, boy.y)
         else:
             boy.image.clip_draw(boy.frame * 100, 0, 100, 100, boy.x, boy.y)
@@ -93,8 +85,6 @@ class RunState:
             boy.velocity -= 1
         elif event == LEFT_UP:
             boy.velocity += 1
-        if event == R_DASH_OFF or event == L_DASH_OFF:
-            boy.timer = 1000
         boy.dir = boy.velocity
 
     @staticmethod
@@ -119,10 +109,18 @@ class RunState:
 next_state_table = {
     # fill here
     IdleState: {RIGHT_UP: RunState, LEFT_UP: RunState,
-                RIGHT_DOWN: RunState, LEFT_DOWN: RunState},
+                RIGHT_DOWN: RunState, LEFT_DOWN: RunState,
+                R_DASH_ON: IdleState, L_DASH_ON: IdleState,
+                R_DASH_OFF: IdleState, L_DASH_OFF: IdleState},
     RunState: {RIGHT_UP: IdleState, LEFT_UP: IdleState,
-               LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState}
-
+               LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState,
+               R_DASH_ON: DashState, L_DASH_ON: DashState,
+               R_DASH_OFF: RunState, L_DASH_OFF: RunState},
+    DashState: {RIGHT_UP: IdleState, LEFT_UP: IdleState,
+                LEFT_DOWN: IdleState, RIGHT_DOWN: IdleState,
+                L_DASH_OFF: RunState, R_DASH_OFF: RunState,
+                L_DASH_ON: DashState, R_DASH_ON: DashState,
+                DASH_TIMER: RunState}
 }
 
 
