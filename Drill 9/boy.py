@@ -50,7 +50,7 @@ class IdleState:
 class DashState:
     @staticmethod
     def enter(boy, event):
-        boy.timer = 100
+        boy.timer = 150
 
     @staticmethod
     def exit(boy, event):
@@ -60,14 +60,14 @@ class DashState:
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
         boy.timer -= 1
-        boy.x += boy.velocity * 2
+        boy.x += boy.velocity * 3
         boy.x = clamp(25, boy.x, 800 - 25)
         if boy.timer == 0:
             boy.add_event(DASH_TIMER)
 
     @staticmethod
     def draw(boy):
-        if boy.velocity == 3:
+        if boy.velocity == 1:
             boy.image.clip_draw(boy.frame * 100, 100, 100, 100, boy.x, boy.y)
         else:
             boy.image.clip_draw(boy.frame * 100, 0, 100, 100, boy.x, boy.y)
