@@ -88,7 +88,7 @@ class RunState:
     def do(boy):
         # boy.frame = (boy.frame + 1) % 8
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-        boy.x += boy.velocity * game_framework.frame_time
+        boy.x += (boy.velocity) * game_framework.frame_time
         boy.x = clamp(25, boy.x, 1600 - 25)
 
     @staticmethod
@@ -144,6 +144,8 @@ class Boy:
         self.event_que = []
         self.cur_state = IdleState
         self.cur_state.enter(self, None)
+        self.fall_speed = 0
+        self.board_speed = 80
 
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50

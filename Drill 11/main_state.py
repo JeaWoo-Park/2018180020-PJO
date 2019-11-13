@@ -6,6 +6,7 @@ from pico2d import *
 import game_framework
 import game_world
 
+from board import Board
 from boy import Boy
 from grass import Grass
 from ball import Ball, BigBall
@@ -16,6 +17,7 @@ boy = None
 grass = None
 balls = []
 big_balls = []
+board = None
 
 
 def collide(a, b):
@@ -49,6 +51,10 @@ def enter():
     for ball in balls:
         game_world.add_object(ball, 1)
 
+    global board
+    board = Board()
+    game_world.add_object(board, 0)
+
 
 def exit():
     game_world.clear()
@@ -80,9 +86,11 @@ def update():
         if collide(boy, ball):
             balls.remove(ball)
             game_world.remove_object(ball)
-    for ball in balls:
         if collide(grass, ball):
             ball.stop()
+        if collide(board, ball):
+            ball.stop()
+            ball.board_speed = board.SPEED
 
 
 def draw():
