@@ -5,6 +5,7 @@ from ball import Ball
 import game_world
 
 BOY_MAX_HEIGHT = 300
+BOY_FALL_SPEED = 160
 # Boy Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour
@@ -75,7 +76,6 @@ class IdleState:
 
 
 class RunState:
-
     @staticmethod
     def enter(boy, event):
         if event == RIGHT_DOWN:
@@ -173,7 +173,7 @@ class Boy:
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
     def jump(self):
-        self.fall_speed = 50
+        self.fall_speed = BOY_FALL_SPEED
         pass
 
     def add_event(self, event):
