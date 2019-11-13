@@ -27,8 +27,6 @@ class Ball:
         self.fall_speed = 0
 
 
-# fill here
-# class BigBall
 class BigBall(Ball):
     NIN_FALL_SPEED = 50  # 50 pps = 1.5 meter per sec
     MAX_FALL_SPEED = 200  # 200 pps = 6 meter per sec
