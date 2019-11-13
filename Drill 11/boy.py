@@ -57,9 +57,11 @@ class IdleState:
         boy.y += boy.fall_speed * game_framework.frame_time
         if boy.y > BOY_MAX_HEIGHT:
             boy.fall_speed *= -1
+            boy.falling = True
         if boy.y < 90:
             boy.y = 90
             boy.fall_speed = 0
+            boy.falling = False
         boy.x += boy.board_speed * game_framework.frame_time
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         boy.timer -= 1
@@ -98,9 +100,11 @@ class RunState:
         boy.y += boy.fall_speed * game_framework.frame_time
         if boy.y > BOY_MAX_HEIGHT:
             boy.fall_speed *= -1
+            boy.falling = True
         if boy.y < 90:
             boy.y = 90
             boy.fall_speed = 0
+            boy.falling = False
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         boy.x += (boy.velocity + boy.board_speed) * game_framework.frame_time
         boy.x = clamp(50, boy.x, 1600 - 50)
@@ -128,9 +132,11 @@ class SleepState:
         boy.y += boy.fall_speed * game_framework.frame_time
         if boy.y > BOY_MAX_HEIGHT:
             boy.fall_speed *= -1
+            boy.falling = True
         if boy.y < 90:
             boy.y = 90
             boy.fall_speed = 0
+            boy.falling = False
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         boy.x = clamp(50, boy.x, 1600 - 50)
         boy.x += boy.board_speed * game_framework.frame_time
@@ -168,6 +174,7 @@ class Boy:
         self.cur_state.enter(self, None)
         self.fall_speed = 0
         self.board_speed = 0
+        self.falling = False
 
     def get_bb(self):
         return self.x - 50, self.y - 38, self.x + 50, self.y + 50
@@ -175,7 +182,6 @@ class Boy:
     def jump(self):
         if self.fall_speed == 0:
             self.fall_speed = BOY_FALL_SPEED
-
     def add_event(self, event):
         self.event_que.insert(0, event)
 

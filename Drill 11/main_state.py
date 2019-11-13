@@ -7,7 +7,7 @@ import game_framework
 import game_world
 
 from board import Board
-from boy import Boy,BOY_FALL_SPEED
+from boy import Boy, BOY_FALL_SPEED
 from grass import Grass
 from ball import Ball, BigBall
 
@@ -93,13 +93,14 @@ def update():
             ball.board_speed = board.SPEED
 
     if collide(board, boy):
-        if boy.fall_speed <= 0 and boy.y - 50 >= board.y:
+        if boy.fall_speed <= 0 and boy.y - 38 >= board.y + 19:
             boy.board_speed = board.SPEED
             boy.fall_speed = 0
 
     if not collide(board, boy):
         boy.board_speed = 0
-
+        if boy.falling:
+            boy.fall_speed = -BOY_FALL_SPEED
 
 
 def draw():
