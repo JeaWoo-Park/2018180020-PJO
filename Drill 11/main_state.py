@@ -91,6 +91,8 @@ def update():
         if collide(board, ball):
             ball.stop()
             ball.board_speed = board.SPEED
+    
+
 
 
 def draw():

@@ -4,6 +4,7 @@ from ball import Ball
 
 import game_world
 
+BOY_MAX_HEIGHT = 300
 # Boy Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour
@@ -47,13 +48,21 @@ class IdleState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            boy.fire_ball()
+            boy.jump()
         pass
 
     @staticmethod
     def do(boy):
+        boy.y += boy.fall_speed * game_framework.frame_time
+        if boy.y > BOY_MAX_HEIGHT:
+            boy.fall_speed *= -1
+        if boy.y < 90:
+            boy.y = 90
+            boy.fall_speed = 0
+        boy.x += boy.board_speed * game_framework.frame_time
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
         boy.timer -= 1
+        boy.x = clamp(50, boy.x, 1600 - 50)
         if boy.timer == 0:
             boy.add_event(SLEEP_TIMER)
 
@@ -82,14 +91,19 @@ class RunState:
     @staticmethod
     def exit(boy, event):
         if event == SPACE:
-            boy.fire_ball()
+            boy.jump()
 
     @staticmethod
     def do(boy):
-        # boy.frame = (boy.frame + 1) % 8
+        boy.y += boy.fall_speed * game_framework.frame_time
+        if boy.y > BOY_MAX_HEIGHT:
+            boy.fall_speed *= -1
+        if boy.y < 90:
+            boy.y = 90
+            boy.fall_speed = 0
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-        boy.x += (boy.velocity) * game_framework.frame_time
-        boy.x = clamp(25, boy.x, 1600 - 25)
+        boy.x += (boy.velocity + boy.board_speed) * game_framework.frame_time
+        boy.x = clamp(50, boy.x, 1600 - 50)
 
     @staticmethod
     def draw(boy):
@@ -111,7 +125,15 @@ class SleepState:
 
     @staticmethod
     def do(boy):
+        boy.y += boy.fall_speed * game_framework.frame_time
+        if boy.y > BOY_MAX_HEIGHT:
+            boy.fall_speed *= -1
+        if boy.y < 90:
+            boy.y = 90
+            boy.fall_speed = 0
         boy.frame = (boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        boy.x = clamp(50, boy.x, 1600 - 50)
+        boy.x += boy.board_speed * game_framework.frame_time
 
     @staticmethod
     def draw(boy):
@@ -145,14 +167,14 @@ class Boy:
         self.cur_state = IdleState
         self.cur_state.enter(self, None)
         self.fall_speed = 0
-        self.board_speed = 80
+        self.board_speed = 0
 
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
-    def fire_ball(self):
-        ball = Ball(self.x, self.y, self.dir * RUN_SPEED_PPS * 10)
-        game_world.add_object(ball, 1)
+    def jump(self):
+        self.fall_speed = 50
+        pass
 
     def add_event(self, event):
         self.event_que.insert(0, event)
