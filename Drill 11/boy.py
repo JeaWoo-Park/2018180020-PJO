@@ -170,11 +170,11 @@ class Boy:
         self.board_speed = 0
 
     def get_bb(self):
-        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+        return self.x - 50, self.y - 38, self.x + 50, self.y + 50
 
     def jump(self):
-        self.fall_speed = BOY_FALL_SPEED
-        pass
+        if self.fall_speed == 0:
+            self.fall_speed = BOY_FALL_SPEED
 
     def add_event(self, event):
         self.event_que.insert(0, event)

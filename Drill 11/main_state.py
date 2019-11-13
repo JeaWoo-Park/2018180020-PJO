@@ -93,8 +93,9 @@ def update():
             ball.board_speed = board.SPEED
 
     if collide(board, boy):
-        if boy.fall_speed <= 0:
+        if boy.fall_speed <= 0 and boy.y - 50 >= board.y:
             boy.board_speed = board.SPEED
+            boy.fall_speed = 0
 
     if not collide(board, boy):
         boy.board_speed = 0
