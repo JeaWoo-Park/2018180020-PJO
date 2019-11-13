@@ -14,14 +14,14 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
 
-class RunState:
+class RIGHT_FlyState:
 
     @staticmethod
-    def enter(bird, event):
+    def enter():
         pass
 
     @staticmethod
-    def exit(bird, event):
+    def exit():
         pass
 
     @staticmethod
@@ -38,31 +38,58 @@ class RunState:
             bird.image.clip_draw(int(bird.frame) * 100, 0, 100, 100, bird.x, bird.y)
 
 
+class Left_FlyState:
+
+    @staticmethod
+    def enter():
+        pass
+
+    @staticmethod
+    def exit():
+        pass
+
+    @staticmethod
+    def do(bird):
+        bird.frame = (bird.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        bird.x -= bird.velocity * game_framework.frame_time
+        bird.x = clamp(25, bird.x, 1600 - 25)
+
+    @staticmethod
+    def draw(bird):
+        if bird.dir == 1:
+            bird.image.clip_draw(int(bird.frame) * 100, 100, 100, 100, bird.x, bird.y)
+        else:
+            bird.image.clip_draw(int(bird.frame) * 100, 0, 100, 100, bird.x, bird.y)
+
+
 class Bird:
 
     def __init__(self):
-        self.x, self.y = 1600 // 2, 90
+        self.x, self.y = 1600 // 2, 400
         # Boy is only once created, so instance image loading is fine
-        self.image = load_image('animation_sheet.png')
-        # fill here
-        self.font = load_font('ENCR10B.TTF', 16)
+        self.image = load_image('bird_animation.png')
         self.dir = 1
-        self.velocity = 0
+        self.velocity = 200
         self.frame = 0
         self.event_que = []
-        self.cur_state = RunState
-        self.cur_state.enter(self, None)
+        self.cur_state = RIGHT_FlyState
+        self.cur_state.enter()
 
     def add_event(self, event):
         self.event_que.insert(0, event)
 
     def update(self):
         self.cur_state.do(self)
-        if len(self.event_que) > 0:
-            event = self.event_que.pop()
-            self.cur_state.exit(self, event)
-            self.cur_state = next_state_table[self.cur_state][event]
-            self.cur_state.enter(self, event)
+        if self.x < 0:
+            self.cur_state.exit()
+            self.cur_state = RIGHT_FlyState
+            self.cur_state.enter()
+        if self.x > 1600:
+            self.cur_state.exit()
+            self.cur_state = Left_FlyState
+            self.cur_state.enter()
+
+
 
     def draw(self):
         self.cur_state.draw(self)
