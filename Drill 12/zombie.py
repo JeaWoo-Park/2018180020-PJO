@@ -120,7 +120,7 @@ class Zombie:
         pass
 
     def draw(self):
-        self.font.draw(self.x - 60, self.y + 50, 'HP : %d' % self.hp, (255, 255, 0))
+        self.font.draw(self.x - 20, self.y + 50, 'HP : %d' % self.hp, (255, 255, 0))
         if math.cos(self.dir) < 0:
             if self.speed == 0:
                 Zombie.images['Idle'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 100, 100)
