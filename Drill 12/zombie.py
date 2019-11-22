@@ -65,6 +65,32 @@ class Zombie:
         return BehaviorTree.SUCCESS
         pass
 
+    def find_big_ball(self):
+        balls = main_state.get_big_ball()
+        distance = 100000000
+        if len(balls) == 0:
+            return BehaviorTree.FAIL
+        for ball in balls:
+            dist = (ball.x - self.x) ** 2 + (ball.y - self.y) ** 2
+            if distance > dist:
+                distance = dist
+                self.dir = math.atan2(ball.y - self.y, ball.x - self.x)
+                self.target_x, self.target_y = ball.x, ball.y
+        return BehaviorTree.SUCCESS
+
+    def find_small_ball(self):
+        balls = main_state.get_small_ball()
+        distance = 100000000
+        if len(balls) == 0:
+            return BehaviorTree.FAIL
+        for ball in balls:
+            if distance > ((ball.x - self.x) ** 2 + (ball.y - self.y) ** 2):
+                distance = (ball.x - self.x) ** 2 + (ball.y - self.y) ** 2
+                self.dir = math.atan2(ball.y - self.y, ball.x - self.x)
+                self.target_x, target_y = ball.x, ball.y
+
+        return BehaviorTree.SUCCESS
+
     def find_player(self):
         boy = main_state.get_boy()
         distance = (boy.x - self.x) ** 2 + (boy.y - self.y) ** 2
@@ -102,14 +128,22 @@ class Zombie:
         pass
 
     def build_behavior_tree(self):
-        wander_node = LeafNode("Wander", self.wander)
+        find_big_ball_node = LeafNode("Find Big Ball",self.find_big_ball)
+        move_to_big_ball_node = LeafNode("Move To Big Ball",self.move_to_target)
+        find_small_ball_node = LeafNode("Find Small Ball",self.find_small_ball)
+        move_to_small_ball_node = LeafNode("Move To Small Ball",self.move_to_target)
+        get_big_ball_node = SequenceNode("Get Big Ball")
+        get_big_ball_node.add_children(find_big_ball_node, move_to_big_ball_node)
+        get_small_ball_node = SequenceNode("Get Small ball")
+        get_small_ball_node.add_children(find_small_ball_node, move_to_small_ball_node)
         find_player_node = LeafNode("Find Player", self.find_player)
         move_to_player_node = LeafNode("Move to Player", self.move_to_player)
         chase_node = SequenceNode("Chase")
         chase_node.add_children(find_player_node, move_to_player_node)
-        wander_chase_node = SelectorNode("WanderChase")
-        wander_chase_node.add_children(chase_node, wander_node)
-        self.bt = BehaviorTree(wander_chase_node)
+
+        root_node = SelectorNode("RootNode")
+        root_node.add_children(get_big_ball_node, get_small_ball_node, chase_node)
+        self.bt = BehaviorTree(root_node)
         pass
 
     def get_bb(self):
