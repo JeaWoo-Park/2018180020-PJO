@@ -135,7 +135,7 @@ class Zombie:
             game_world.remove_object(self.target)
             main_state.small_ball.remove(self.target)
         elif main_state.collide(self, boy):
-            game_world.remove_object(self)  
+            game_world.remove_object(self)
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
