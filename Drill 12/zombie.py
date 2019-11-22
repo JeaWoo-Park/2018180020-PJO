@@ -44,6 +44,8 @@ class Zombie:
         self.timer = 1.0  # change direction every 1 sec when wandering
         self.frame = 0
         self.build_behavior_tree()
+        self.font = load_font('ENCR10B.TTF', 16)
+        self.hp = 0
 
     def calculate_current_position(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
@@ -118,6 +120,7 @@ class Zombie:
         pass
 
     def draw(self):
+        self.font.draw(self.x - 60, self.y + 50, 'HP : %d' % self.hp, (255, 255, 0))
         if math.cos(self.dir) < 0:
             if self.speed == 0:
                 Zombie.images['Idle'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 100, 100)

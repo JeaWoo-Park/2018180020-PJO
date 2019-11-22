@@ -5,6 +5,7 @@ import os
 from pico2d import *
 import game_framework
 import game_world
+import Ball
 
 from boy import Boy
 from ground import Ground
@@ -15,7 +16,8 @@ name = "MainState"
 
 boy = None
 zombie = None
-
+big_ball = None
+small_ball = None
 
 def collide(a, b):
     # fill here
@@ -36,6 +38,14 @@ def get_boy():
 
 
 def enter():
+    global big_ball
+    big_ball = [Ball.BigBall() for i in range(5)]
+    game_world.add_objects(big_ball, 1)
+
+    global small_ball
+    small_ball = [Ball.SmallBall() for i in range(5)]
+    game_world.add_objects(small_ball, 1)
+
     global boy
     boy = Boy()
     game_world.add_object(boy, 1)
