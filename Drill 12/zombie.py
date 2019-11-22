@@ -4,6 +4,7 @@ import game_framework
 from BehaviorTree import BehaviorTree, SelectorNode, SequenceNode, LeafNode
 from pico2d import *
 import main_state
+import game_world
 
 # zombie Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -37,6 +38,7 @@ class Zombie:
             self.patrol_positons.append((p[0], 1024 - p[1]))
         self.patrol_order = 1
         self.target_x, self.target_y = None, None
+        self.target = None
         self.x, self.y = random.randint(100, 1000), random.randint(100, 900)
         self.load_images()
         self.dir = random.random() * 2 * math.pi  # random moving direction
@@ -54,17 +56,6 @@ class Zombie:
         self.x = clamp(50, self.x, 1280 - 50)
         self.y = clamp(50, self.y, 1024 - 50)
 
-    def wander(self):
-        self.speed = RUN_SPEED_PPS
-        self.calculate_current_position()
-        self.timer -= game_framework.frame_time
-        if self.timer < 0:
-            self.timer += 1.0
-            self.dir = random.random() * 2 * math.pi
-
-        return BehaviorTree.SUCCESS
-        pass
-
     def find_big_ball(self):
         balls = main_state.get_big_ball()
         distance = 100000000
@@ -75,6 +66,7 @@ class Zombie:
             if distance > dist:
                 distance = dist
                 self.dir = math.atan2(ball.y - self.y, ball.x - self.x)
+                self.target = ball
                 self.target_x, self.target_y = ball.x, ball.y
         return BehaviorTree.SUCCESS
 
@@ -84,11 +76,12 @@ class Zombie:
         if len(balls) == 0:
             return BehaviorTree.FAIL
         for ball in balls:
-            if distance > ((ball.x - self.x) ** 2 + (ball.y - self.y) ** 2):
-                distance = (ball.x - self.x) ** 2 + (ball.y - self.y) ** 2
+            dist = (ball.x - self.x) ** 2 + (ball.y - self.y) ** 2
+            if distance > dist:
+                distance = dist
                 self.dir = math.atan2(ball.y - self.y, ball.x - self.x)
-                self.target_x, target_y = ball.x, ball.y
-
+                self.target = ball
+                self.target_x, self.target_y = ball.x, ball.y
         return BehaviorTree.SUCCESS
 
     def find_player(self):
@@ -115,23 +108,40 @@ class Zombie:
         return BehaviorTree.SUCCESS
         pass
 
-    def move_to_target(self):
+    def move_to_big_ball(self):
         self.speed = RUN_SPEED_PPS
         self.calculate_current_position()
 
         distance = (self.target_x - self.x) ** 2 + (self.target_y - self.y) ** 2
+        if main_state.collide(self.target, self):
+            self.hp += self.target.hp
+            game_world.remove_object(self.target)
+            main_state.big_ball.remove(self.target)
+            # self.target, self.target.x, self.target.y = None, None, None
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+        pass
 
-        if distance < PIXEL_PER_METER ** 2:
+    def move_to_small_ball(self):
+        self.speed = RUN_SPEED_PPS
+        self.calculate_current_position()
+
+        distance = (self.target_x - self.x) ** 2 + (self.target_y - self.y) ** 2
+        if main_state.collide(self.target, self):
+            self.hp += self.target.hp
+            game_world.remove_object(self.target)
+            main_state.small_ball.remove(self.target)
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
         pass
 
     def build_behavior_tree(self):
-        find_big_ball_node = LeafNode("Find Big Ball",self.find_big_ball)
-        move_to_big_ball_node = LeafNode("Move To Big Ball",self.move_to_target)
-        find_small_ball_node = LeafNode("Find Small Ball",self.find_small_ball)
-        move_to_small_ball_node = LeafNode("Move To Small Ball",self.move_to_target)
+        find_big_ball_node = LeafNode("Find Big Ball", self.find_big_ball)
+        move_to_big_ball_node = LeafNode("Move To Big Ball", self.move_to_big_ball)
+        find_small_ball_node = LeafNode("Find Small Ball", self.find_small_ball)
+        move_to_small_ball_node = LeafNode("Move To Small Ball", self.move_to_small_ball)
         get_big_ball_node = SequenceNode("Get Big Ball")
         get_big_ball_node.add_children(find_big_ball_node, move_to_big_ball_node)
         get_small_ball_node = SequenceNode("Get Small ball")
