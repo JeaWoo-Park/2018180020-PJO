@@ -71,6 +71,7 @@ class Zombie:
         return BehaviorTree.SUCCESS
 
     def find_small_ball(self):
+
         balls = main_state.get_small_ball()
         distance = 100000000
         if len(balls) == 0:
@@ -90,10 +91,12 @@ class Zombie:
         self.dir = math.atan2(boy.y - self.y, boy.x - self.x)
         return BehaviorTree.SUCCESS
 
-
     def move_to_player(self):
+        boy = main_state.get_boy()
         self.speed = RUN_SPEED_PPS
         self.calculate_current_position()
+        if main_state.collide(self, boy):
+            game_world.remove_object(boy)
         return BehaviorTree.SUCCESS
         pass
 
@@ -105,6 +108,7 @@ class Zombie:
         pass
 
     def move_to_big_ball(self):
+        boy = main_state.get_boy()
         self.speed = RUN_SPEED_PPS
         self.calculate_current_position()
 
@@ -113,13 +117,15 @@ class Zombie:
             self.hp += self.target.hp
             game_world.remove_object(self.target)
             main_state.big_ball.remove(self.target)
-            # self.target, self.target.x, self.target.y = None, None, None
+        elif main_state.collide(self, boy):
+            game_world.remove_object(self)
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
         pass
 
     def move_to_small_ball(self):
+        boy = main_state.get_boy()
         self.speed = RUN_SPEED_PPS
         self.calculate_current_position()
 
@@ -128,6 +134,8 @@ class Zombie:
             self.hp += self.target.hp
             game_world.remove_object(self.target)
             main_state.small_ball.remove(self.target)
+        elif main_state.collide(self, boy):
+            game_world.remove_object(self)  
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
