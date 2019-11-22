@@ -37,7 +37,7 @@ class Zombie:
             self.patrol_positons.append((p[0], 1024 - p[1]))
         self.patrol_order = 1
         self.target_x, self.target_y = None, None
-        self.x, self.y = self.patrol_positons[0]
+        self.x, self.y = random.randint(100, 1000), random.randint(100, 900)
         self.load_images()
         self.dir = random.random() * 2 * math.pi  # random moving direction
         self.speed = 0
