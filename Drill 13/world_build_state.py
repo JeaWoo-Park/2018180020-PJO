@@ -13,7 +13,7 @@ from boy import Boy
 from zombie import Zombie
 
 boy = None
-
+zombie = None
 name = "WorldBuildState"
 
 menu = None
@@ -42,9 +42,12 @@ def resume():
 def get_boy():
     return boy
 
+def get_zombie():
+    return zombie
 
 def create_new_world():
     global boy
+    global zombie
     boy = Boy()
     game_world.add_object(boy, 1)
 
