@@ -8,6 +8,7 @@ import game_framework
 from pico2d import *
 
 font = None
+rank = None
 
 
 def enter():
@@ -28,10 +29,18 @@ def resume():
 
 
 def update():
+    global rank
+    with open('ranking.json', 'r') as f:
+        rank = json.load(f)
+    rank.sort()
     pass
 
 
 def draw():
+    clear_canvas()
+    for i in range(10):
+        font.draw(100, 600 - i * 30, '#%d. %3.2f' % (i + 1, rank[len(rank) - 1 - i]), (0, 0, 0))
+    update_canvas()
     pass
 
 

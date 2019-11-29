@@ -12,6 +12,7 @@ import world_build_state
 
 name = "MainState"
 
+rank = [1, 1, 1, 2, 1, 2, 3, 4, 5, 8]
 
 def collide(a, b):
     # fill here
@@ -57,6 +58,9 @@ def handle_events():
             boy.handle_event(event)
     for i in range(1, len(game_world.objects[1])):
         if collide(boy, game_world.objects[1][i]):
+            rank.append(boy.start_time)
+            with open('ranking.json', 'w') as f:
+                json.dump(rank, f)
             game_framework.change_state(ranking_state)
 
 
