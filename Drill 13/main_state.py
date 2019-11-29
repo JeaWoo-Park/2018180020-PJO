@@ -58,7 +58,7 @@ def handle_events():
             boy.handle_event(event)
     for i in range(1, len(game_world.objects[1])):
         if collide(boy, game_world.objects[1][i]):
-            rank.append(boy.start_time)
+            rank.append(get_time() - boy.start_time)
             with open('ranking.json', 'w') as f:
                 json.dump(rank, f)
             game_framework.change_state(ranking_state)

@@ -51,6 +51,9 @@ def create_new_world():
     boy = Boy()
     game_world.add_object(boy, 1)
 
+    with open('ranking.json', 'r') as f:
+        main_state.rank = json.load(f)
+
     with open('zombie_data.json', 'r') as f:
         zombie_data_list = json.load(f)
 
