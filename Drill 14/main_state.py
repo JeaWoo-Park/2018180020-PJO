@@ -41,10 +41,7 @@ def enter():
     boy = Boy()
     game_world.add_object(boy, 1)
 
-    global balls
-    balls = [Ball() for i in range(100)]
-    for ball in balls:
-        game_world.add_object(ball, 1)
+
 
     global background
     background = Background()
@@ -53,6 +50,11 @@ def enter():
     background.set_center_object(boy)
     boy.set_background(background)
 
+    global balls
+    balls = [Ball() for i in range(100)]
+    for ball in balls:
+        ball.set_background(background)
+        game_world.add_object(ball, 1)
 
 def exit():
     game_world.clear()
@@ -79,7 +81,7 @@ def handle_events():
 def update():
     for game_object in game_world.all_objects():
         game_object.update()
-
+    
 
 def draw():
     clear_canvas()
