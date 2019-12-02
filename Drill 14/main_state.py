@@ -2,6 +2,7 @@ import random
 import json
 import os
 
+from ball import Ball
 from pico2d import *
 import game_framework
 import game_world
@@ -13,6 +14,7 @@ from background import FixedBackground as Background
 name = "MainState"
 
 boy = None
+balls = None
 background = None
 
 
@@ -38,6 +40,11 @@ def enter():
     global boy
     boy = Boy()
     game_world.add_object(boy, 1)
+
+    global balls
+    balls = [Ball() for i in range(100)]
+    for ball in balls:
+        game_world.add_object(ball, 1)
 
     global background
     background = Background()
