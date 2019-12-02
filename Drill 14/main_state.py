@@ -85,7 +85,7 @@ def update():
         if collide(boy, ball):
             balls.remove(ball)
             game_world.remove_object(ball)
-
+            boy.count_ball += 1
 
 def draw():
     clear_canvas()
