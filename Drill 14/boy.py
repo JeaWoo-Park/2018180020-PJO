@@ -91,6 +91,7 @@ class WalkingState:
                     boy.image.clip_draw(int(boy.frame) * 100, 300, 100, 100, cx, cy)
                 else:
                     boy.image.clip_draw(int(boy.frame) * 100, 200, 100, 100, cx, cy)
+        boy.font.draw(cx, cy + 50, "%d" % boy.count_ball, (255, 255, 255))
 
 
 next_state_table = {
@@ -116,6 +117,7 @@ class Boy:
         self.event_que = []
         self.cur_state = WalkingState
         self.cur_state.enter(self, None)
+        self.count_ball = 0
 
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
@@ -138,8 +140,8 @@ class Boy:
 
     def draw(self):
         self.cur_state.draw(self)
-        self.font.draw(self.canvas_width // 2 - 60, self.canvas_height // 2 + 50, '(%5d, %5d)' % (self.x, self.y),
-                       (255, 255, 0))
+       # self.font.draw(self.canvas_width // 2 - 60, self.canvas_height // 2 + 50, '(%5d, %5d)' % (self.x, self.y),
+       #                (255, 255, 0))
 
     def handle_event(self, event):
         if (event.type, event.key) in key_event_table:
