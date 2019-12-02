@@ -7,7 +7,7 @@ import game_framework
 import game_world
 
 from boy import Boy
-from background import InfiniteBackground as Background
+from background import FixedBackground as Background
 
 
 name = "MainState"
